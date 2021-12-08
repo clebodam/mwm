@@ -9,6 +9,7 @@ import Foundation
 
 protocol DataServiceProtocol {
 
+    func getData() -> ApiData?
     func getAllKeys() -> [Key]
     func getChoordsForKey( key: Key) -> [Choord]
     func saveData(_ data: ApiData, completion: (ApiData) -> ())
@@ -19,6 +20,10 @@ class DataService: DataServiceProtocol {
     func saveData(_ data: ApiData, completion: (ApiData) -> ()) {
         self.data = data
         completion(data)
+    }
+
+    func getData() -> ApiData? {
+        return data
     }
 
     func getAllKeys() -> [Key] {

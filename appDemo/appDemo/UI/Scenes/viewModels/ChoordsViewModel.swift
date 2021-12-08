@@ -9,10 +9,7 @@ import Foundation
 
 class ChoordsViewModel {
 
-
-
-    private let networkService: NetWorkServiceProtocol!
-    private let dataService: DataServiceProtocol!
+    private let repository:  ChoordsRepositoryProtocol!
     private var currentKey: Key?
     private var currentChoord: Choord?
     private var currentChoords = [Choord]()
@@ -20,21 +17,17 @@ class ChoordsViewModel {
     var errorBlock: (()->())?
     var loadChoordsBlock: (()->())?
     var loadChoordsDetailsBlock: ((Choord)->())?
-    init(networkService:  NetWorkServiceProtocol, dataService: DataServiceProtocol) {
-        self.networkService = networkService
-        self.dataService = dataService
+    init(repository: ChoordsRepositoryProtocol) {
+        self.repository = repository
     }
 
     private  func getData(completion: @escaping (ApiData) ->()) {
-        self.networkService.fetchData {  [unowned self] (data) in 
+        self.repository.fetchData {  [unowned self] (data) in
             guard let data = data else {
                 self.errorBlock?()
                 return
             }
-
-            self.dataService.saveData(data ) { data in
-                completion(data)
-            }
+            completion(data)
         }
     }
 
@@ -49,9 +42,9 @@ class ChoordsViewModel {
     }
 
     func keyForIndex(_ index: Int) -> Key? {
-        let allKeys = self.dataService.getAllKeys()
+        let allKeys = self.repository.getAllKeys()
         if allKeys.count > index {
-            return self.dataService.getAllKeys()[index]
+            return self.repository.getAllKeys()[index]
         }
         return nil
     }
@@ -75,11 +68,11 @@ class ChoordsViewModel {
     }
 
     func getKeyCount() -> Int {
-        return self.dataService.getAllKeys().count
+        return self.repository.getAllKeys().count
     }
 
     func getChoords(key: Key) -> [Choord] {
-        return self.dataService.getChoordsForKey(key: key)
+        return self.repository.getChoordsForKey(key: key)
     }
 
 
@@ -89,7 +82,7 @@ class ChoordsViewModel {
 
     func didSelectKey( _ key : Key) {
         self.currentKey = key
-        self.currentChoords = self.dataService.getChoordsForKey(key: key)
+        self.currentChoords = self.repository.getChoordsForKey(key: key)
         self.loadChoordsBlock?()
 
     }

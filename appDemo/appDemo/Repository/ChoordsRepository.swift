@@ -7,7 +7,13 @@
 
 import Foundation
 
-class ChoordsRepository {
+protocol ChoordsRepositoryProtocol {
+    func fetchData(completion: @escaping (ApiData?) -> ())
+    func getAllKeys() -> [Key]
+    func getAllChoords() -> [Choord]
+    func getChoordsForKey( key: Key) -> [Choord]
+}
+class ChoordsRepository: ChoordsRepositoryProtocol {
     let networkService : NetWorkServiceProtocol!
     let dataService: DataServiceProtocol!
     init(networkService: NetWorkServiceProtocol, dataService: DataServiceProtocol) {
@@ -28,6 +34,23 @@ class ChoordsRepository {
             }
         } else {
             completion( self.dataService.getData())
+        }
+    }
+
+    func getAllKeys() -> [Key] {
+        return self.dataService.getData()?.allKeys ?? []
+    }
+
+    func getAllChoords() -> [Choord] {
+        return self.dataService.getData()?.allChords ?? []
+    }
+
+    func getChoordsForKey( key: Key) -> [Choord] {
+        guard let choords = self.dataService.getData()?.allChords else {
+            return []
+        }
+        return choords.filter {
+            key.keychordIds.contains($0.chordId)
         }
     }
 

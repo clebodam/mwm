@@ -52,7 +52,8 @@ class AppCoordinator: TabBarCoordinator {
 
         if let choords = ViewControllerFactory.createViewController(ChoordsViewController.self, initCompleted: { [unowned self] choords in
             choords.tabBarItem = UITabBarItem(title: "Choords", image: UIImage(systemName: "music.note"), selectedImage: UIImage(systemName: "music.note"))
-            choords.setViewModel(ChoordsViewModel(networkService: NetWorkService(), dataService: DataService()))
+            let repository = ChoordsRepository(networkService: NetWorkService(), dataService:  DataService())
+            choords.setViewModel(ChoordsViewModel(repository: repository))
             choords.coordinator = self
 
         }) {
